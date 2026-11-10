@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Everyone Is Talking</title>
+<meta name="description" content="A radio dial for the world's political speech. 1,456 rooms in 102 countries. Turn the dial.">
+<meta name="theme-color" content="#0b0907">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section id="intro" class="intro">
+  <div class="intro-inner">
+    <p class="intro-kicker">A film research receiver</p>
+    <h1>Everyone<br>Is Talking</h1>
+    <p class="intro-line"><span id="introRooms">1,456</span> rooms. <span id="introCountries">102</span> countries.<br>Turn the dial.</p>
+    <button id="power" class="power" type="button" aria-label="Power on">
+      <span class="power-ring"></span>
+      <span class="power-label">Power</span>
+    </button>
+    <p class="intro-note">Sound on. Every station is a real council, parliament or political show.</p>
+  </div>
+</section>
+
+<main id="set" class="set" hidden>
+  <header class="top">
+    <div class="brand">Everyone Is Talking</div>
+    <div class="meter" aria-live="off">
+      <span>Listening <b id="clock">00:00</b></span>
+      <span>Rooms entered <b id="visited">0</b></span>
+    </div>
+    <button id="aboutBtn" class="link-btn" type="button">About</button>
+  </header>
+
+  <div class="cabinet">
+    <div class="screen-wrap">
+      <div class="screen" id="screen">
+        <div id="player"></div>
+        <canvas id="static" width="320" height="180" aria-hidden="true"></canvas>
+        <div class="scanlines" aria-hidden="true"></div>
+        <div class="nosignal" id="nosignal" hidden>
+          <p class="ns-title" id="nsTitle">No signal</p>
+          <p class="ns-text" id="nsText"></p>
+          <a class="ns-link" id="nsLink" target="_blank" rel="noopener">Visit this room</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="plate" aria-live="polite">
+      <div class="plate-main">
+        <span class="lamp" id="lamp"></span>
+        <div>
+          <p class="st-name" id="stName">—</p>
+          <p class="st-meta" id="stMeta">Tuning</p>
+        </div>
+      </div>
+      <div class="plate-side">
+        <span class="freq" id="freq">000.0</span>
+        <a class="src" id="stLink" target="_blank" rel="noopener" hidden>Source ↗</a>
+      </div>
+    </div>
+
+    <div class="dial-wrap">
+      <canvas id="dial" class="dial" tabindex="0" role="slider" aria-label="Tuning dial" aria-valuemin="0" aria-valuenow="0"></canvas>
+      <div class="needle" aria-hidden="true"></div>
+    </div>
+
+    <div class="controls">
+      <div class="bands" role="tablist" aria-label="Band">
+        <button class="band is-on" data-band="rooms" role="tab" type="button">Rooms<small>town → world</small></button>
+        <button class="band" data-band="voices" role="tab" type="button">Voices<small>left ↔ right</small></button>
+        <button class="band" data-band="wire" role="tab" type="button">Wire<small>news &amp; think tanks</small></button>
+      </div>
+
+      <div class="knob-area">
+        <button class="key" id="seekPrev" type="button" aria-label="Previous station with a signal">◀ Seek</button>
+        <div class="knob" id="knob" aria-hidden="true"><span></span></div>
+        <button class="key" id="seekNext" type="button" aria-label="Next station with a signal">Seek ▶</button>
+      </div>
+
+      <div class="right-keys">
+        <button class="key" id="scan" type="button">Scan</button>
+        <button class="key" id="mute" type="button" aria-pressed="false">Static on</button>
+      </div>
+    </div>
+    <p class="hint">Drag the dial, scroll, or use ← → keys. Seek jumps to the next station with a signal.</p>
+  </div>
+</main>
+
+<div class="sheet" id="about" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <button class="sheet-close" id="aboutClose" type="button" aria-label="Close">×</button>
+    <h2 id="aboutTitle">About this receiver</h2>
+    <p>This dial is built from a research registry of political broadcasts gathered for a film: town councils, regional assemblies, national parliaments, political shows, news channels and think tanks. Politics never stops talking. Almost nobody is listening to most of it.</p>
+    <ul id="aboutStats"></ul>
+    <h3>How to read it</h3>
+    <ul>
+      <li><b>Rooms</b> runs from town councils, through regions and nations, up to world bodies.</li>
+      <li><b>Voices</b> runs from left to right. The labels come from the research registry and have not been independently reviewed. Most of them are American.</li>
+      <li><b>Wire</b> holds news channels, think tanks and shows without a left or right label.</li>
+      <li>A lit tick has a broadcast. A dim tick is a <b>dark station</b>: the room exists, but we found no channel we could verify.</li>
+    </ul>
+    <h3>What you are watching</h3>
+    <p>Each station plays from that body's own YouTube channel, through YouTube's player. Most of it is recent recordings, not live. Nothing is re-hosted, and the receiver drops you into the middle of a broadcast on purpose.</p>
+    <p class="fine">Prototype. Nearly half of the registry is from the United States, because that is where the research was done from.</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
