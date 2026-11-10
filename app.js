@@ -90,7 +90,7 @@
   /* ---------- YouTube ---------- */
 
   let player = null, playerReady = false, pendingTune = false;
-  let tuneTimer = 0, failTimer = 0, tries = 0, seeked = false, autoTries = 0, stage = 0, sawError = false;
+  let tuneTimer = 0, failTimer = 0, tries = 0, seeked = false, autoTries = 0, stage = 0, sawError = false, waited = 0;
   let staleVideo = '', loadedFor = '';
 
   function loadYouTube() {
@@ -156,7 +156,32 @@
     player.stopVideo();
     player.loadPlaylist({ listType: 'playlist', list: lists[stage], index: 0 });
     clearTimeout(failTimer);
-    failTimer = setTimeout(() => { if (!state.locked) { stage++; loadStage(); } }, 7000);
+    failTimer = setTimeout(checkStage, 7000);
+    waited = 0;
+  }
+
+  // YouTube sometimes plays an ad before the broadcast. The player then reports "unstarted"
+  // while its clock runs. Show the ad, as YouTube requires, and wait for the station behind it.
+  function inAdBreak() {
+    const st = player.getPlayerState();
+    const v = currentVideo();
+    return (st === -1 || st === 3) && player.getCurrentTime() > 0.5 && v && v !== staleVideo;
+  }
+
+  function checkStage() {
+    if (state.locked) return;
+    if (inAdBreak() && waited < 120) {
+      waited += 2;
+      els.screen.classList.add('is-locked');
+      els.lamp.className = 'lamp is-on';
+      els.meta.textContent = 'Station break · a YouTube ad, then the room';
+      setNoise(0);
+      failTimer = setTimeout(checkStage, 2000);
+      return;
+    }
+    els.screen.classList.remove('is-locked');
+    stage++;
+    loadStage();
   }
 
   function onPlayerError() {
@@ -177,6 +202,7 @@
     els.lamp.className = 'lamp is-on';
     setNoise(0);
     const s = stations()[state.tuned];
+    showStation(state.tuned);
     if (s) loadedFor = s.id;
     if (s && !state.visited.has(s.id)) {
       state.visited.add(s.id);
@@ -236,7 +262,7 @@
     pendingTune = false;
     els.ns.hidden = true;
     stage = 0;
-    sawError = false;
+    sawError = false, waited = 0;
     staleVideo = loadedFor === s.id ? '' : currentVideo();
     loadStage();
   }
