@@ -90,7 +90,7 @@
   /* ---------- YouTube ---------- */
 
   let player = null, playerReady = false, pendingTune = false;
-  let tuneTimer = 0, failTimer = 0, tries = 0, seeked = false, autoTries = 0, stage = 0, sawError = false, waited = 0;
+  let tuneTimer = 0, failTimer = 0, tries = 0, seeked = false, autoTries = 0, stage = 0, sawError = false, waited = 0, grace = 0;
   let staleVideo = '', loadedFor = '';
 
   function loadYouTube() {
@@ -158,6 +158,7 @@
     clearTimeout(failTimer);
     failTimer = setTimeout(checkStage, 7000);
     waited = 0;
+    grace = 0;
   }
 
   // YouTube sometimes plays an ad before the broadcast. The player then reports "unstarted"
@@ -172,6 +173,7 @@
     if (state.locked) return;
     if (inAdBreak() && waited < 120) {
       waited += 2;
+      grace = 14;
       els.screen.classList.add('is-locked');
       els.lamp.className = 'lamp is-on';
       els.meta.textContent = 'Station break · a YouTube ad, then the room';
@@ -179,6 +181,8 @@
       failTimer = setTimeout(checkStage, 2000);
       return;
     }
+    // the ad has just ended and the broadcast is still buffering: give it a moment
+    if (grace > 0) { grace -= 2; failTimer = setTimeout(checkStage, 2000); return; }
     els.screen.classList.remove('is-locked');
     stage++;
     loadStage();
@@ -262,7 +266,7 @@
     pendingTune = false;
     els.ns.hidden = true;
     stage = 0;
-    sawError = false, waited = 0;
+    sawError = false, waited = 0, grace = 0;
     staleVideo = loadedFor === s.id ? '' : currentVideo();
     loadStage();
   }
